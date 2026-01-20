@@ -200,6 +200,4 @@ if run:
     st.markdown("---")
     st.subheader("🧠 Explainable AI (XAI)")
     st.info(
-        "This POC uses TF-IDF vectorization and cosine similarity (scikit-learn) to compute similarity between "
-        "resume text and job description text. Skill-gap analysis highlights matched and missing skills based on a curated skill list."
     )
