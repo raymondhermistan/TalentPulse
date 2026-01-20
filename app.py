@@ -29,8 +29,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="big">🤖 TalentPulse ATS (POC)</div>', unsafe_allow_html=True)
-st.markdown('<div class="muted">Interactive screening prototype: upload resumes + JD → score → rank → filter → shortlist</div>', unsafe_allow_html=True)
+st.markdown('<div class="big">🤖 TalentPulse</div>', unsafe_allow_html=True)
 st.markdown("---")
 
 # -------------------- DATABASES --------------------
