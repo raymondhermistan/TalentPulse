@@ -1,81 +1,46 @@
+# TalentPulse POC (CLO2) - Streamlit Prototype
+# AI method: TF-IDF + Cosine Similarity (plus skill-gap extraction)
+# Deployed-ready for Streamlit Community Cloud
+
 import streamlit as st
 import pandas as pd
+import re
+from math import floor
 
-st.set_page_config(page_title="TalentPulse", layout="wide")
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-st.title("🤖 TalentPulse – AI Resume Matching Prototype")
-st.subheader("Smart Talent Intelligence Dashboard")
-st.markdown("---")
+st.set_page_config(page_title="TalentPulse", page_icon="🤖", layout="wide")
 
-col1, col2 = st.columns(2)
+# ------------------ SIMPLE THEME / STYLE ------------------
+st.markdown("""
+<style>
+.big-title { font-size:42px; font-weight:800; color:#1f77ff; margin-bottom:0px;}
+.sub { color:#94a3b8; margin-top:0px; }
+.card { background:#0b1220; border:1px solid #1f2a44; padding:18px; border-radius:14px; }
+.badge { display:inline-block; padding:6px 12px; border-radius:999px; font-size:13px; margin:4px 6px 0 0; color:white; background:#2563eb; }
+.badge-miss { background:#ef4444; }
+.badge-ok { background:#22c55e; }
+.small { font-size:13px; color:#cbd5e1; }
+hr { border: none; height: 1px; background: #1f2a44; margin: 12px 0 18px 0;}
+</style>
+""", unsafe_allow_html=True)
 
-with col1:
-    st.header("📄 Resume Input")
-    resume_text = st.text_area("Paste Candidate Resume Text Here", height=200)
+# ------------------ HEADER ------------------
+st.markdown('<div class="big-title">🤖 TalentPulse</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub">Proof of Concept (POC): AI Resume ↔ Job Description Matching using TF-IDF + Cosine Similarity</div>', unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
 
-with col2:
-    st.header("🧾 Job Description Input")
-    jd_text = st.text_area("Paste Job Description Here", height=200)
+# ------------------ SIDEBAR ------------------
+st.sidebar.header("⚙️ POC Controls")
 
-st.markdown("---")
+mode = st.sidebar.radio("Navigation", ["1) Input", "2) Matching Results", "3) Ranking", "4) Explanation (XAI)"])
 
-def extract_skills(text):
-    skills_db = [
-        "python", "java", "sql", "machine learning",
-        "data analysis", "cloud", "aws", "communication"
-    ]
-    found = []
-    for skill in skills_db:
-        if skill.lower() in text.lower():
-            found.append(skill)
-    return found
+use_samples = st.sidebar.checkbox("Use sample data (recommended for demo)", value=True)
+show_debug = st.sidebar.checkbox("Show AI debug details (optional)", value=False)
 
-if st.button("🔍 Run TalentPulse Matching Engine"):
+# ------------------ SAMPLE DATA ------------------
+SAMPLE_RESUME = """
+Raymonda
 
-    resume_skills = extract_skills(resume_text)
-    jd_skills = extract_skills(jd_text)
-
-    matched = list(set(resume_skills) & set(jd_skills))
-    missing = list(set(jd_skills) - set(resume_skills))
-
-    score = int((len(matched) / len(jd_skills)) * 100) if len(jd_skills) else 0
-
-    st.success("Matching Completed!")
-
-    col3, col4, col5 = st.columns(3)
-
-    with col3:
-        st.metric("🎯 Match Score", f"{score}%")
-
-    with col4:
-        st.write("✅ Matched Skills")
-        st.write(matched if matched else "No matched skills found")
-
-    with col5:
-        st.write("❌ Missing Skills")
-        st.write(missing if missing else "No missing skills")
-
-    st.markdown("---")
-    st.header("🧠 AI Explanation Panel (XAI)")
-
-    explanation = f"""
-    The system analysed the resume and job description using keyword skill matching.
-
-    Total job skills detected: {len(jd_skills)}
-    Skills matched: {len(matched)}
-
-    Final Match Score = (Matched Skills / Required Skills) × 100
-    Final Score = {score}%
-    """
-    st.info(explanation)
-
-    st.header("📊 Candidate Ranking Simulation")
-
-    df = pd.DataFrame({
-        "Candidate": ["Candidate A", "Candidate B", "Candidate C"],
-        "Match Score (%)": [score, 78, 62],
-        "Status": ["You", "Strong Match", "Moderate Match"]
-    })
-
-    st.table(df)
 
