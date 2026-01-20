@@ -197,7 +197,4 @@ if run:
     st.subheader("📊 Ranking Results")
     st.dataframe(df, use_container_width=True)
 
-    st.markdown("---")
-    st.subheader("🧠 Explainable AI (XAI)")
-    st.info(
-    )
+
